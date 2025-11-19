@@ -13,7 +13,7 @@ const CopyIcon = () => (
 );
 
 const CheckIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-800">
     <polyline points="20 6 9 17 4 12"></polyline>
   </svg>
 );
@@ -32,12 +32,12 @@ export const ResultCard: React.FC<ResultCardProps> = ({ item }) => {
       <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <div>
           <h3 className="font-semibold text-slate-800 text-lg">{item.productName}</h3>
-          <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-indigo-600 truncate block max-w-xs md:max-w-md">
+          <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-slate-900 truncate block max-w-xs md:max-w-md transition-colors">
             {item.sourceUrl}
           </a>
         </div>
         <div className="flex items-center space-x-2">
-            <span className="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-md border border-indigo-100">Source Page</span>
+            <span className="px-2 py-1 bg-white text-slate-600 text-xs font-medium rounded-md border border-slate-200">Source Page</span>
         </div>
       </div>
       
@@ -47,11 +47,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({ item }) => {
             <div key={idx} className="group relative flex items-start p-3 rounded-lg border border-transparent hover:border-slate-200 hover:bg-slate-50 transition-all">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded 
-                        ${suggestion.type === 'exact' ? 'bg-green-100 text-green-800' : 
-                          suggestion.type === 'partial' ? 'bg-blue-100 text-blue-800' : 
-                          suggestion.type === 'contextual' ? 'bg-purple-100 text-purple-800' : 
-                          'bg-gray-100 text-gray-800'}`}>
+                    <span className="text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-900 border border-slate-200">
                         {suggestion.type}
                     </span>
                 </div>
@@ -61,7 +57,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({ item }) => {
               
               <button
                 onClick={() => copyToClipboard(suggestion.text, idx)}
-                className="ml-4 p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-md transition-colors border border-transparent hover:border-slate-200 shadow-sm"
+                className="ml-4 p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-md transition-colors border border-transparent hover:border-slate-200 shadow-sm"
                 title="Copy anchor text"
               >
                 {copiedIndex === idx ? <CheckIcon /> : <CopyIcon />}
