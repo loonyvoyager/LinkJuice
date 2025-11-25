@@ -3,30 +3,34 @@ import { LoadingState, ProductAnalysis, GenerateAnchorsRequest } from './types';
 import { generateSEOAnchors } from './services/gemini';
 import { ResultCard } from './components/ResultCard';
 
-// Preset data from the user's prompt
-const PRESET_TARGET_URL = "https://www.brushapes.com/store/procreate-brushes";
-const PRESET_KEYWORD = "Procreate Brushes"; 
-const PRESET_PRODUCTS = [
-  "https://www.brushapes.com/store/p/gouache-zen-procreate-brushes",
-  "https://www.brushapes.com/store/p/pastel-dreams-procreate-brushes",
-  "https://www.brushapes.com/store/p/watercolor-journeys-procreate-brushes",
-  "https://www.brushapes.com/store/p/ballpoint-pen-procreate-brushes",
-  "https://www.brushapes.com/store/p/procreate-craftsman-linocut-brushes",
-  "https://www.brushapes.com/store/p/pencil-procreate-brushes",
-  "https://www.brushapes.com/store/p/grim-shaders-procreate-brushes-starter-pack",
-  "https://www.brushapes.com/store/p/manga-anime-procreate-brushes-starter-pack",
-  "https://www.brushapes.com/store/p/manga-screentone-procreate-brushes",
-  "https://www.brushapes.com/store/p/procreate-essential-liner-brushes",
-  "https://www.brushapes.com/store/p/complete-procreate-shader-brushes-bundle"
-].join('\n');
+// Authorization Credentials
+const AUTH_USER = "admin";
+const AUTH_PASS = "PYgzAHj5WgI9Sz";
 
 const App: React.FC = () => {
-  const [targetUrl, setTargetUrl] = useState(PRESET_TARGET_URL);
-  const [targetKeyword, setTargetKeyword] = useState(PRESET_KEYWORD);
-  const [productsText, setProductsText] = useState(PRESET_PRODUCTS);
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+
+  // Application State
+  const [targetUrl, setTargetUrl] = useState("");
+  const [targetKeyword, setTargetKeyword] = useState("");
+  const [productsText, setProductsText] = useState("");
   const [loadingState, setLoadingState] = useState<LoadingState>(LoadingState.IDLE);
   const [results, setResults] = useState<ProductAnalysis[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (username === AUTH_USER && password === AUTH_PASS) {
+      setIsAuthenticated(true);
+      setAuthError("");
+    } else {
+      setAuthError("Invalid credentials");
+    }
+  };
 
   const isValidUrl = (string: string) => {
     try {
@@ -86,19 +90,91 @@ const App: React.FC = () => {
     }
   }, [targetUrl, targetKeyword, productsText]);
 
+  // Login Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans text-slate-900">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+           <div className="flex justify-center">
+             <svg className="w-12 h-12 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+             </svg>
+           </div>
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-slate-900">
+            Sign in to LinkJuice AI
+          </h2>
+        </div>
+
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-slate-200">
+            <form className="space-y-6" onSubmit={handleLogin}>
+              <div>
+                <label className="block text-sm font-medium text-slate-700">Username</label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none focus:ring-slate-900 sm:text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700">Password</label>
+                <div className="mt-1">
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none focus:ring-slate-900 sm:text-sm"
+                  />
+                </div>
+              </div>
+
+              {authError && (
+                <div className="text-red-600 text-sm bg-red-50 p-2 rounded border border-red-100">{authError}</div>
+              )}
+
+              <div>
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded-md border border-transparent bg-slate-900 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 transition-all"
+                >
+                  Sign in
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Main Application
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 font-sans">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-             <svg className="w-8 h-8 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5 10 5 10-5-5-2.5-5 2.5z" />
+             <svg className="w-8 h-8 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
              </svg>
              <span className="font-bold text-xl tracking-tight text-slate-900">LinkJuice AI</span>
           </div>
-          <div className="text-sm font-medium text-slate-500 hidden sm:block">
-            Internal Linking Generator
+          <div className="flex items-center gap-4">
+            <div className="text-sm font-medium text-slate-500 hidden sm:block">
+              Internal Linking Generator
+            </div>
+            <button 
+              onClick={() => setIsAuthenticated(false)}
+              className="text-sm font-medium text-slate-400 hover:text-slate-900 transition-colors"
+            >
+              Sign out
+            </button>
           </div>
         </div>
       </header>
@@ -147,7 +223,7 @@ const App: React.FC = () => {
                     className="w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-900 focus:ring-1 focus:ring-slate-900 text-xs py-2 px-3 border font-mono h-48 transition-colors outline-none resize-none"
                     placeholder="https://example.com/product-1&#10;https://example.com/product-2"
                   />
-                  <p className="mt-1 text-xs text-slate-500">One URL per line.</p>
+                  <p className="mt-1 text-xs text-slate-500">Paste one URL per line for pages you want to link FROM.</p>
                 </div>
 
                 <button
