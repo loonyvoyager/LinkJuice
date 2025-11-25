@@ -1,10 +1,6 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { ProductAnalysis, GenerateAnchorsRequest } from "../types";
 
-// Initialize the Gemini API client
-// The API key is guaranteed to be available in process.env.API_KEY per environment settings.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const ANCHOR_SCHEMA: Schema = {
   type: Type.ARRAY,
   items: {
@@ -35,6 +31,8 @@ const ANCHOR_SCHEMA: Schema = {
 
 export const generateSEOAnchors = async (request: GenerateAnchorsRequest): Promise<ProductAnalysis[]> => {
   try {
+    // Initialize the Gemini API client inside the function to ensure process.env is accessible
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const model = "gemini-3-pro-preview";
     
     const prompt = `
